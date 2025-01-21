@@ -1,6 +1,10 @@
 #include <Novice.h>
+#include "Player.h"
+#include "Enemy.h"
 
-const char kWindowTitle[] = "LC1B_01_アカミネ_レン_タイトル";
+
+
+const char kWindowTitle[] = "LC1B_01_アカミネ_レン_PG2_13-01";
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -9,8 +13,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
 	// キー入力結果を受け取る箱
-	char keys[256] = {0};
-	char preKeys[256] = {0};
+	char keys[256] = { 0 };
+	char preKeys[256] = { 0 };
+
+
+	// 生成
+	//player
+	Player* player = new Player;
+
+	//enemy
+	Enemy* enemyA = new Enemy;
+	Enemy* enemyB = new Enemy;
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -25,6 +39,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		// リセット操作
+		if (keys[DIK_R] && preKeys[DIK_R]) {
+			enemyA->isAlive_ = true;
+			enemyB->isAlive_ = true;
+			enemyA->enemyCount++;
+			enemyB->enemyCount++;
+		}
+
+		// playerの更新処理
+		player->Update(keys, preKeys);
+
+		// enemyの更新処理
+		enemyA->Update();
+		enemyB->Update();
+
+		//衝突判定
+		enemyA->Collision(player->bullet_);
+		enemyB->Collision(player->bullet_);
+
+		//enemyのどれかが倒された場合すべてのenemyを倒す
+		if (Enemy::enemyCount == 0) {
+			enemyA->isAlive_ = false;
+			enemyB->isAlive_ = false;
+		}
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -32,6 +71,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
+
+		// enemyの描画処理
+		enemyA->Draw();
+		enemyB->Draw();
+
+		// paleyrの描画処理
+		player->Draw();
+
+		// UI
+		Novice::ScreenPrintf(0, 0, "enemyA isAlive = %d", enemyA->isAlive_);
+		Novice::ScreenPrintf(0, 20, "enemyB isAlive = %d", enemyB->isAlive_);
+		Novice::ScreenPrintf(0, 40, "WASD : player Move");
+		Novice::ScreenPrintf(0, 60, "shot : SPACE");
+		Novice::ScreenPrintf(0, 80, "enemy respawn : R");
 
 		///
 		/// ↑描画処理ここまで
@@ -45,6 +98,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 	}
+
+	// 削除
+	delete player;
+
+	delete enemyA;
+	delete enemyB;
 
 	// ライブラリの終了
 	Novice::Finalize();
