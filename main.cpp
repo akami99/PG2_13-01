@@ -41,12 +41,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// リセット操作
 		if (keys[DIK_R] && preKeys[DIK_R]) {
-			enemyA->isAlive_ = true;
-			enemyB->isAlive_ = true;
-			enemyA->enemyCount++;
-			enemyB->enemyCount++;
+			Enemy::isAlive = true;
+			Enemy::enemyCount = 2;
 		}
-
+		
 		// playerの更新処理
 		player->Update(keys, preKeys);
 
@@ -57,12 +55,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//衝突判定
 		enemyA->Collision(player->bullet_);
 		enemyB->Collision(player->bullet_);
-
-		//enemyのどれかが倒された場合すべてのenemyを倒す
-		if (Enemy::enemyCount == 0) {
-			enemyA->isAlive_ = false;
-			enemyB->isAlive_ = false;
-		}
 
 		///
 		/// ↑更新処理ここまで
@@ -80,8 +72,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player->Draw();
 
 		// UI
-		Novice::ScreenPrintf(0, 0, "enemyA isAlive = %d", enemyA->isAlive_);
-		Novice::ScreenPrintf(0, 20, "enemyB isAlive = %d", enemyB->isAlive_);
+		Novice::ScreenPrintf(0, 0, "enemyA isAlive = %d", enemyA->isAlive);
+		Novice::ScreenPrintf(0, 20, "enemyB isAlive = %d", enemyB->isAlive);
 		Novice::ScreenPrintf(0, 40, "WASD : player Move");
 		Novice::ScreenPrintf(0, 60, "shot : SPACE");
 		Novice::ScreenPrintf(0, 80, "enemy respawn : R");

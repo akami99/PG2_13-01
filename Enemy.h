@@ -11,7 +11,7 @@ protected: // メンバ変数
 public:
 	static int enemyCount;
 
-	int isAlive_;  // 生きているかどうか
+	static int isAlive;  // 生きているかどうか
 
 public:    // メンバ関数
 

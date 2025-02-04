@@ -4,20 +4,19 @@
 
 
 int Enemy::enemyCount = 0;
-
+int Enemy::isAlive = true;
 
 Enemy::Enemy() {
-	enemyCount++;
+	Enemy::enemyCount++;
 
 	pos_ = { 250 * enemyCount, 250 * enemyCount };
 	speed_ = 8;
-	isAlive_ = true;
 }
 
 Enemy::~Enemy() { enemyCount--; }
 
 void Enemy::Update() {
-	if (!isAlive_) {
+	if (!Enemy::isAlive) {
 		return;
 	}
 
@@ -28,7 +27,7 @@ void Enemy::Update() {
 }
 
 void Enemy::Collision(Bullet* bullet[20]) { 
-	if (!isAlive_) {
+	if (!Enemy::isAlive) {
 		return;
 	}
 
@@ -36,10 +35,10 @@ void Enemy::Collision(Bullet* bullet[20]) {
 		if (bullet[i]->isShot_) {
 			if (sqrtf(powf(static_cast<float>(bullet[i]->pos_.x - pos_.x), 2.0f) + powf(static_cast<float>(bullet[i]->pos_.y - pos_.y), 2.0f))
 				< bullet[i]->radius_ + radius_) {
+				//enemyのどれかが倒された場合すべてのenemyを倒す
+				Enemy::enemyCount = 0;
 
-				enemyCount = 0;
-
-				isAlive_ = false;
+				Enemy::isAlive = false;
 
 				break;
 			}
@@ -48,7 +47,7 @@ void Enemy::Collision(Bullet* bullet[20]) {
 }
 
 void Enemy::Draw() {
-	if (!isAlive_) {
+	if (!Enemy::isAlive) {
 		return;
 	}
 
